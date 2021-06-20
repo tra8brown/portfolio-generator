@@ -1,5 +1,7 @@
 // 9.2.4 new version from 9.1
-const generatePage = (name, github) => {
+module.exports = templateData => {
+    console.log(templateData);
+
     return `
     <!DOCTYPE html>
     <hmtl lang="en">
@@ -11,8 +13,8 @@ const generatePage = (name, github) => {
     </head>
 
     <body>
-    <h1>${name}</h1>
-    <h2><a href="https://github.com/${github}">Github</a></h2>
+    <h1>${templateData.name}</h1>
+    <h2><a href="https://github.com/${templateData.github}">Github</a></h2>
     </body>
     </html>
     `;
