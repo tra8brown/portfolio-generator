@@ -7,11 +7,11 @@ const promptUser = () => {
             type: 'input',
             name: 'name',
             message: 'What is your name? (Required)',
-            validate: nameInput => { //validate receives an arguement: nameInput
-                if (nameInput) { //conditional
+            validate: nameInput => {
+                if (nameInput) {
                     return true;
                 } else {
-                    console.log('Please enter your name!'); //if question is skipped it will trigger this response
+                    console.log('Please enter your name!');
                     return false;
                 }
             }
@@ -20,8 +20,8 @@ const promptUser = () => {
             type: 'input',
             name: 'github',
             message: 'Enter your GitHub Username (Required)',
-            validate: githubInput => { //validate recieves an arguement: githubInput
-                if (githubInput) { //conditional
+            validate: githubInput => {
+                if (githubInput) {
                     return true;
                 } else {
                     console.log('Please enter your GitHub username!');
@@ -30,13 +30,13 @@ const promptUser = () => {
             }
         },
         {
-            type: 'confirm', // 9.3.6 asks the user if they'd like to add an About section
+            type: 'confirm',
             name: 'confirmAbout',
             message: 'Would you like to enter some information about yourself for an "About" section?',
             default: true
         },
         {
-            type: 'input', //this is like the validate method but instead of passing the value entered for the above question(as a parameter) it passes an object of all the answers given so far.
+            type: 'input',
             name: 'about',
             message: 'Provide some information about yourself:',
             when: ({ confirmAbout }) => confirmAbout
@@ -51,7 +51,7 @@ Add a New Project
 =================
 `);
 
-    // 9.3.5 If there's no 'projects' array property, create one
+    // If there's no 'projects' array property, create one
     if (!portfolioData.projects) {
         portfolioData.projects = [];
     }
@@ -60,8 +60,8 @@ Add a New Project
                 type: 'input',
                 name: 'name',
                 message: 'What is the name of your project? (Required)',
-                validate: nameInput => { //validate receives an arguement: nameInput
-                    if (nameInput) { //conditional
+                validate: nameInput => {
+                    if (nameInput) {
                         return true;
                     } else {
                         console.log('You need to enter a project name!');
@@ -73,7 +73,7 @@ Add a New Project
                 type: 'input',
                 name: 'description',
                 message: 'Provide a description of the project (Required)',
-                validate: descriptionInput => { //validate receives an arguement: descriptionInput
+                validate: descriptionInput => {
                     if (descriptionInput) {
                         return true;
                     } else {
@@ -92,7 +92,7 @@ Add a New Project
                 type: 'input',
                 name: 'link',
                 message: 'Enter the GitHub link to your project. (Required)',
-                validate: linkInput => { //validate receives an arguement: linkInput
+                validate: linkInput => {
                     if (linkInput) {
                         return true;
                     } else {
@@ -114,30 +114,24 @@ Add a New Project
                 default: false
             }
         ])
-
-    .then(projectData => { //callback
-        portfolioData.projects.push(projectData);
-        if (projectData.confirmAddProject) { //condition. eval user resp if they wish to add more projects.
-            return promptProject(portfolioData); //if user wishes to add more, this will evaluate to true and call this promptProject(portfolioData) function.
-        } else { //if user decides to not add, this will evalute to false and trigger this statement.
-            return portfolioData;
-        }
-    });
+        .then(projectData => {
+            portfolioData.projects.push(projectData);
+            if (projectData.confirmAddProject) {
+                return promptProject(portfolioData);
+            } else {
+                return portfolioData;
+            }
+        });
 };
 
 promptUser()
     .then(promptProject)
     .then(portfolioData => {
-        console.log(portfolioData);
         const pageHTML = generatePage(portfolioData);
 
-        // fs.writeFile('./index.html', pageHTML, err => {
-        //   if (err) throw new Error(err);
+        fs.writeFile('./index.html', pageHTML, err => {
+            if (err) throw new Error(err);
 
-        //   console.log('Page created! Check out index.html in this directory to see it!');
-        // });
+            console.log('Page created! Check out index.html in this directory to see it!');
+        });
     });
-// will be uncommented in lesson 4
-// const pageHTML = generatePage(portfolioData);
-// });
-//});
