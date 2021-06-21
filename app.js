@@ -1,6 +1,7 @@
-const fs = require('fs');
+//const fs = require('fs'); replaced with const generateSite = require('.utils/generate-site.js'); this will import the exported object from generate-site.js, allowing us to use gerenateSite.writeFile() & gerenateSite.copyFile().
 const inquirer = require('inquirer');
 const generatePage = require('./src/page-template');
+const { writeFile, copyFile } = require('./utils/generate-site'); //9.5.6
 
 const promptUser = () => {
     return inquirer.prompt([{
@@ -123,15 +124,36 @@ Add a New Project
             }
         });
 };
+//callback functions inside of callback functions, bottom looks much cleaner.
+// promptUser()
+//     .then(promptProject)
+//     .then(portfolioData => {
+//         const pageHTML = generatePage(portfolioData);
 
-promptUser()
-    .then(promptProject)
+//         fs.writeFile('./index.html', pageHTML, err => {
+//             if (err) throw new Error(err);
+
+//             console.log('Page created! Check out index.html in this directory to see it!');
+//         });
+//     });
+//9.5.3 refactoring current fs functionality (promise chain)
+promptUser() //asking user for their info with inquirer prompts; this returns all data as an object in a promise
+    .then(promptProject) //captures returning data from user
     .then(portfolioData => {
-        const pageHTML = generatePage(portfolioData);
-
-        fs.writeFile('./index.html', pageHTML, err => {
-            if (err) throw new Error(err);
-
-            console.log('Page created! Check out index.html in this directory to see it!');
-        });
+        return generatePage(portfolioData); //each project will be pushed into a projects array in the collection of portfolio information
+    })
+    .then(pageHTML => { //when we're done the final set of data is returned to the this .then
+        return writeFile(pageHTML); //finished portfolio data object is returned as portfolioData and sent into the generatePage() fucntion, which will return the finished HTML template code into the pageHTML
+    })
+    .then(writeFileResponse => { //pass pageHTML into newly created writeFile() 
+        console.log(writeFileResponse);
+        return copyFile(); //which returns a promise. 
+    })
+    .then(copyFileResponse => { //promise is retunred into this .then method
+        console.log(copyFileResponse); //successful file creating
+    })
+    .catch(err => { //promise returned by copyFile() then lets us know if the css file was copied succesfully and if so we're all done.
+        console.log(err);
     });
+
+//remove the index.html file at the root of directory since we have the full application in the dist directory. you dont need it anymore.
